@@ -3,7 +3,6 @@ import numpy as np
 
 print (tf.__version__)
 
-#현타가 오지게 오네요....
 
 
 #1. Data 준비
