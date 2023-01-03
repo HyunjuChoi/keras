@@ -22,5 +22,12 @@ model.compile(loss='mae', optimizer='adam')
 model.fit(x,y, epochs=10, batch_size=7)    #adjust batch size                   
 
 #4. prediction
+
+'''loss값으로 정확성 판단하기 때문에 제일 중요! 
+(predict 값보다 더..)'''
+
+loss = model.evaluate(x,y)                            #모델 평가 =>loss 값 반환
+print('loss: ', loss)
 result = model.predict([6])
 print("6 result: ", result)
+
