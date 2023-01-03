@@ -4,11 +4,12 @@ import numpy as np
 print (tf.__version__)
 
 
+
 #1. Data 준비
 x = np.array([1,2,3])               # numpy 형식의 행렬 
 y = np.array([1,2,3])              
 
-#2. model 구성(케라스 문법을 통한 텐서플로) 
+#2. model 구성(케라스 문법을 통한 텐서플로)
 from tensorflow.keras.models import Sequential      # 딥러닝 순차모델         
 from tensorflow.keras.layers import Dense           # y = wx+b 구성 위한 기초
 
