@@ -17,11 +17,11 @@ print(x.shape)
 
 #2. modeling
 model = Sequential()
-model.add(Dense(5, input_dim=3))
+model.add(Dense(5, input_dim=3))                #input data set이 3차행렬이므로 3으로 해줘야 오류 안남
 model.add(Dense(4))
 model.add(Dense(3))
 model.add(Dense(2))
-model.add(Dense(1))
+model.add(Dense(1))                 # Q. 아웃풋 레이어는 항상 1이어야 할까? => 아닌듯?!
 
 #3. compile & training
 model.compile(loss='mae', optimizer='adam')
