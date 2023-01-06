@@ -30,22 +30,19 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffl
 #2. modeling
 model = Sequential()
 model.add(Dense(1, input_dim=8))
-model.add(Dense(10))
-model.add(Dense(10))
-model.add(Dense(20))
-model.add(Dense(30))
-model.add(Dense(40))
-model.add(Dense(50))
-model.add(Dense(40))
-model.add(Dense(30))
-model.add(Dense(20))
-model.add(Dense(10))
+model.add(Dense(10, activation='relu'))
+model.add(Dense(10, activation='relu'))
+model.add(Dense(20, activation='relu'))
+model.add(Dense(30, activation='relu'))
+model.add(Dense(20, activation='relu'))
+model.add(Dense(10, activation='relu'))
 model.add(Dense(1))
 
 #3. compile and training
 model.compile(loss='mse', optimizer='adam', metrics=['mse'])
 start = time.time()
-model.fit(x_train, y_train, epochs=1000, batch_size=500)
+model.fit(x_train, y_train, epochs=1000, batch_size=100,
+          validation_split=0.3)
 end = time.time()
 
 
@@ -82,7 +79,15 @@ model.fit(x_train, y_train, epochs=10000, batch_size=500)
 
 =>r2:  0.5882458818645178
 
-2.
+
+2. relu 적용, validation_set 설정, 
+r2:  -0.0016761227565078585
+time:  44.03359031677246
+
+
+3. batch_size= 100
+r2:  0.6466477577634997
+time:  121.37677597999573
 
 '''
 
