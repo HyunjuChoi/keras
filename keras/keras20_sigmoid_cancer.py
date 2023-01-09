@@ -67,7 +67,10 @@ from sklearn.metrics import r2_score, accuracy_score                    #Accurac
 
 #구글링해서 찾은 방법
 y_pred_1d = y_predict.flatten()                                         # 차원 펴주기
-y_pred_class = np.where(y_pred_1d > 0.5, 1 , 0)                         #0.5보다 크면 1, 작으면 0
+y_pred_class = np.where(y_pred_1d > 0.5, 1 , 0)                         # 0.5보다 크면 1, 작으면 0
+
+# print(y_pred_1d)                           왜 여기서 다 0.5보다 크게 나오는데
+# print(y_pred_class)                       여기서 어쩔 땐 1이고 어쩔 땐 0이지????
 
 acc = accuracy_score(y_test, y_pred_class)
 print('accuracy score: ', acc)
