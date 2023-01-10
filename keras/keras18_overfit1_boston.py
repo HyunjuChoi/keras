@@ -55,7 +55,7 @@ print(hist.history['loss'])                 #loss값만 출력
 
 #5. 시각화
 plt.figure(figsize=(9,6))           #그래프 사이즈 설정
-plt.plot(hist.history['loss'], c='red', marker='.', label='loss')                #maker=선 무늬
+plt.plot(hist.history['loss'], c='red', marker='.', label='loss')                #marker=선 무늬
 plt.plot(hist.history['val_loss'], c='blue', marker='.', label='val_loss')
 plt.grid()                          #격자무늬 추가
 plt.xlabel('epoch')                 #축 이름 추가

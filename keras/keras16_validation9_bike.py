@@ -78,7 +78,7 @@ print('R2: ', r2)
 
 #submission file 만들기
 submission['count'] = y_submit
-submission.to_csv(path+'submission_0106_val.csv')
+submission.to_csv(path+'submission_0109_val.csv')
 
 
 #tf27 time: 890.0578079223633
@@ -148,5 +148,15 @@ R2:  0.21428936132885523
 
 
 10. epochs = 5000, batch_size = 32
+RMSE:  157.20796765663897
+time:  1385.5057547092438
+y_sub:  (6493, 1)
+R2:  0.2556797199926514
+
+11.        
+RMSE:  265.0970226437377
+time:  851.4608535766602
+y_sub:  (6493, 1)
+R2:  -1.1165105896156429                                                                                                                                                                         
 
 '''

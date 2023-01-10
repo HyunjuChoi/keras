@@ -4,7 +4,7 @@ from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 import numpy as np
 
-from tensorflow.keras.callbacks import EarlyStopping                    #EarylyStopping 추가
+from tensorflow.keras.callbacks import EarlyStopping                    #EarlyStopping 추가
 
 #1. data
 datasets = load_breast_cancer()
@@ -62,21 +62,35 @@ y_predict = model.predict(x_test)                   #sigmoid 통과 후 값
 
 from sklearn.metrics import r2_score, accuracy_score                    #Accuracy Score 추가
 
-# acc = accuracy_score(y_test, y_predict)                               #그냥 돌리면 y_test랑 y_predict 실수/정수형이라 에러남
+# print(y_predict)
+# print(y_test)
+
+#acc = accuracy_score(y_test, y_predict)                               #그냥 돌리면 y_test랑 y_predict 실수/정수형이라 에러남
 
 
-#구글링해서 찾은 방법
-y_pred_1d = y_predict.flatten()                                         # 차원 펴주기
-y_pred_class = np.where(y_pred_1d > 0.5, 1 , 0)                         # 0.5보다 크면 1, 작으면 0
+# 구글링해서 찾은 방법
+# y_pred_1d = y_predict.flatten()                                         # 차원 펴주기, numpy에서 제공하는 다차원 배열 공간을 1차원으로 평탄화해주는 함수
+# y_pred_class = np.where(y_pred_1d > 0.5, 1 , 0)                         #조건을 찾아, 변경하거나, 인덱싱하는 간단한 함수가 numpy의 where함수(조건문)
+                                                                          # 0.5보다 크면 1, 작으면 0
+
+
+#팀원 구글링
+#y_predict = np.asarray(y_predict, dtype=int)                             #얘는 왜 다 0으로 바뀔까?
+
+#다른 방법
+y_int = np.round(y_predict).astype(int)
+print(y_int)
+
 
 # print(y_pred_1d)                           왜 여기서 다 0.5보다 크게 나오는데
 # print(y_pred_class)                       여기서 어쩔 땐 1이고 어쩔 땐 0이지????
 
-acc = accuracy_score(y_test, y_pred_class)
+acc = accuracy_score(y_test, y_int)
 print('accuracy score: ', acc)
-
-
 '''
+print(y_predict)
+print(y_test)
+print(y_pred_class)
 print('=================================')
 print(hist.history)
 '''
