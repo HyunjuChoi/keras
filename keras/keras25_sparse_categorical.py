@@ -28,8 +28,8 @@ y = datasets['target']
 
 
 # one hot encoding 방법1
-from tensorflow.keras.utils import to_categorical
-y = to_categorical(y)
+# from tensorflow.keras.utils import to_categorical
+# y = to_categorical(y)
 
 # print(y)
 # print(y.shape)                  #(150,3)
@@ -42,10 +42,6 @@ x_train, x_test, y_train, y_test = train_test_split(
                                                                                 #셔플 설정 안하면 예측값 좋지 않다!
     stratify= y                                                                 #<분류>에만 사용 가능! <회귀>모델이면 error 발생!                                                                 
 )
-
-#print(y_train)
-#print(y_test)
-
 ### 데이터 양이 많아질수록 train과 test의 데이터 값이 한쪽으로 치우치게 분류되어 예측 모델 성능 하락할 수 있음.###
 ### => 따라서 분류할 때 한쪽 데이터에만 치우치지 않게 해주는 것! *** stratify= y ***   데이터 종류 동일한 비율로 뽑힌다!
 
@@ -56,12 +52,12 @@ model.add(Dense(40, activation='relu', input_shape=(4, )))
 model.add(Dense(30, activation='sigmoid'))
 model.add(Dense(20, activation='relu'))
 model.add(Dense(10, activation='linear'))
-model.add(Dense(3, activation='softmax'))                       #다중 분류!!!   =>y 데이터 종류 개수(class) 0, 1, 2 세개이므로 output layer도 3이다
+model.add(Dense(3, activation='softmax'))                       #one hot은 하지 않아도 y 노드 최종 개수만큼 output layer 3으로 설정해줘야 함.
 
 #3.compile and training
 # model.compile(loss='categorical_crossentropy', optimizer='adam',
 #               metrics=['accuracy'])
-model.compile(loss='categorical_crossentropy', optimizer='adam',                     
+model.compile(loss='sparse_categorical_crossentropy', optimizer='adam',                     #one hot encoding 안 할 경우 loss를 sparse_categorical_crossentropy로 변경하면 됨
               metrics=['accuracy'])
 model.fit(x_train, y_train, epochs=100, batch_size=1,
           validation_split=0.2, verbose=1)
@@ -71,7 +67,7 @@ loss, accuracy = model.evaluate(x_test, y_test)
 print('loss: ', loss)
 print('accuracy:', accuracy)
 
-
+\
 # print(y_test[:5])
 # y_predict = model.predict(x_test[:5])
 # print('y_predict: ',y_predict)
@@ -89,76 +85,14 @@ y_predict:  [[9.9995244e-01 4.7606685e-05 3.4614822e-16]
 '''
 
 from sklearn.metrics import accuracy_score
-y_predict = model.predict(x_test)
-#print(y_predict)
-'''
-[[9.99776542e-01 2.23436815e-04 9.26398019e-21]
- [1.05961290e-11 2.23073922e-03 9.97769237e-01]
- [9.99832511e-01 1.67454782e-04 4.95978020e-21]
- [4.50488313e-09 1.30853906e-01 8.69146109e-01]
- [7.26735028e-09 1.76931351e-01 8.23068559e-01]
- [1.53647221e-07 7.49591768e-01 2.50408053e-01]
- [9.99768794e-01 2.31153754e-04 1.31838574e-20]
- [1.43495025e-11 2.98978994e-03 9.97010231e-01]
- [9.99783576e-01 2.16440225e-04 9.45296269e-21]
- [1.48966135e-11 3.00275115e-03 9.96997237e-01]
- [4.89722585e-12 1.46913237e-03 9.98530865e-01]
- [3.06293574e-10 2.42768023e-02 9.75723147e-01]
- [4.18809071e-10 2.84040906e-02 9.71595943e-01]
- [9.99821723e-01 1.78356175e-04 5.38971217e-21]
- [9.99790609e-01 2.09458885e-04 9.07889853e-21]
- [9.99806345e-01 1.93703498e-04 6.72702775e-21]
- [5.20687356e-12 1.40721910e-03 9.98592794e-01]
- [9.99891639e-01 1.08364271e-04 1.40637850e-21]
- [3.01313002e-10 2.28192266e-02 9.77180719e-01]
- [4.48502442e-06 9.99267161e-01 7.28269457e-04]
- [9.99754608e-01 2.45428440e-04 1.25351087e-20]
- [7.47441109e-10 4.02933136e-02 9.59706664e-01]
- [2.24269973e-03 9.97757375e-01 1.83430942e-08]
- [1.57563170e-06 9.94338691e-01 5.65972226e-03]
- [9.99808013e-01 1.91956438e-04 7.62750432e-21]
- [2.52046908e-11 4.01195884e-03 9.95988071e-01]
- [1.20073253e-06 9.87487674e-01 1.25111751e-02]
- [1.82416788e-05 9.99926329e-01 5.54396247e-05]
- [1.64315843e-05 9.99884367e-01 9.92263012e-05]
- [2.84527846e-09 8.83064121e-02 9.11693633e-01]]
-'''
-y_predict = np.argmax(y_predict, axis=1)                        #argmax: y_predict의 가장 큰 값 => 자리값 뽑아줌
-#print(y_test)
-'''
-[[1. 0. 0.]
- [0. 0. 1.]
- [1. 0. 0.]
- [0. 1. 0.]
- [0. 1. 0.]
- [0. 1. 0.]
- [1. 0. 0.]
- [0. 0. 1.]
- [1. 0. 0.]
- [0. 0. 1.]
- [0. 0. 1.]
- [0. 0. 1.]
- [0. 0. 1.]
- [1. 0. 0.]
- [1. 0. 0.]
- [1. 0. 0.]
- [0. 0. 1.]
- [1. 0. 0.]
- [0. 0. 1.]
- [0. 1. 0.]
- [1. 0. 0.]
- [0. 0. 1.]
- [0. 1. 0.]
- [0. 1. 0.]
- [1. 0. 0.]
- [0. 0. 1.]
- [0. 1. 0.]
- [0. 1. 0.]
- [0. 1. 0.]
- [0. 1. 0.]]
-'''
 
-y_test = np.argmax(y_test, axis=1)
+#x_test.shape = (30,4)
+
+y_predict = model.predict(x_test)                               #y_predict.shape = (30,3)
+y_predict = np.argmax(y_predict, axis=1)                        #argmax: y_predict의 가장 큰 값 => 자리값 뽑아줌
+# print(y_test)
+
+# y_test = np.argmax(y_test, axis=1)                            #one hot 안했으므로 argmax 할 필요 X
 # print('y_pred 예측값: ',y_predict)                                                   #[0 2 0 2 2 1 0 2 0 2 2 2 2 0 0 0 2 0 2 1 0 2 1 1 0 2 1 1 1 2]
 # print('y_test 원래 값: ',y_test)                                                       #[0 2 0 1 1 1 0 2 0 2 2 2 2 0 0 0 2 0 2 1 0 2 1 1 0 2 1 1 1 1]
 acc = accuracy_score(y_test, y_predict)                                           #y_test: 정수형, y_predict는 실수형이라 error 남

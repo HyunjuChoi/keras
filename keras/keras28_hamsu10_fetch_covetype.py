@@ -1,12 +1,15 @@
 import numpy as np
 from sklearn.datasets import fetch_covtype
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Input
 from sklearn.model_selection import train_test_split
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
 
 #one-hot encoding 하는 방법: 판다스 사이킷런 텐서플로
 
-#1. data 
+#1. data
 datasets = fetch_covtype()
 x = datasets['data']
 y = datasets['target']
@@ -44,18 +47,32 @@ print(y)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, random_state=115, test_size=0.2, stratify=y)
 
+# scaler = MinMaxScaler()
+scaler = StandardScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
 
 # print('x_test: ', x_test)
 
 #2. modeling
-model = Sequential()
-model.add(Dense(30, activation='linear',input_shape=(54, )))
-model.add(Dense(20, activation='relu'))
-model.add(Dense(30, activation='relu'))
-model.add(Dense(20, activation='relu'))
-model.add(Dense(10, activation='linear'))
-model.add(Dense(7, activation='softmax'))
+# model = Sequential()
+# model.add(Dense(30, activation='linear',input_shape=(54, )))
+# model.add(Dense(20, activation='relu'))
+# model.add(Dense(30, activation='relu'))
+# model.add(Dense(20, activation='relu'))
+# model.add(Dense(10, activation='linear'))
+# model.add(Dense(7, activation='softmax'))
 
+#2. modeling
+input1 = Input(shape=(54, ))
+dense1 = Dense(30, activation='linear')(input1)
+dense2 = Dense(20, activation='relu')(dense1)
+dense3 = Dense(30, activation='relu')(dense2)
+dense4 = Dense(20, activation='relu')(dense3)
+dense5 = Dense(10, activation='linear')(dense4)
+output1 = Dense(7, activation='softmax')(dense5)
+
+model = Model(inputs = input1, outputs = output1)
 
 #3. compile and training
 
@@ -132,5 +149,23 @@ acc:  0.3991979553023588
 loss:  0.44903087615966797
 accuracy:  0.8118637204170227
 acc:  0.8118637212464395
+
+
+1/11일
+
+<<min max>>
+Epoch 00297: early stopping
+3632/3632 [==============================] - 2s 558us/step - loss: 0.3684 - accuracy: 0.8506
+loss:  0.3683554530143738
+accuracy:  0.8506492972373962
+acc:  0.8506492947686376
+
+<<standard>>
+Epoch 00257: early stopping
+3632/3632 [==============================] - 2s 569us/step - loss: 0.3639 - accuracy: 0.8537
+loss:  0.3638581931591034
+accuracy:  0.8536612391471863
+acc:  0.8536612651996937
+
 
 '''

@@ -3,10 +3,7 @@ from sklearn.datasets import fetch_covtype
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
-import tensorflow as tf
 import pandas as pd
-
-import scipy.sparse
 
 
 from sklearn.preprocessing import OneHotEncoder
@@ -18,70 +15,31 @@ datasets = fetch_covtype()
 x = datasets['data']
 y = datasets['target']
 
-# print('r_y: ')
-# print(y)
-
 # print(x.shape, y.shape)                             #(581012, 54) (581012,)         
 # print(np.unique(y, return_counts=True))             #(array([1, 2, 3, 4, 5, 6, 7]), array([211840, 283301,  35754,   2747,   9493,  17367,  20510],
                                                       #    dtype=int64))
-                                                      
-                                                      
-                                              
-# from tensorflow.keras.utils import to_categorical           #array 데이터에 0값이 없으면 알아서 0추가해서 컬럼 수가 바뀜 ㅠ
-# y = to_categorical(y)
-
-# print('y1: ')
-print(y)
-print('================================')
-# print(y.shape)
-# print(type(y))
-
-#y =  y[:, 1:]           #(0번째 열 삭제)
-# print(y2)
-# print(y2.shape)
-
-# print(np.unique(y, return_counts=True))
-# print(np.unique(y2, return_counts=True))
-
-#y = np.delete(y, 0, axis=1)                 #0번째 열 삭제
-# print(y2.shape)
-#print(y)
+                                                                                                 
 
 
-
+#2. 방법2 Pandas Getdummies
 
 #y = pd.get_dummies(y, dummy_na=False)                   #dummy_na: True = (581012, 8),  //  False = (581012, 7)   (defalut값: false)  
-                                                         # 마지막에 에러뜸  =>np.argmax  대신 tf.argmax 쓰면 에러 안 남ㄴ
+                                                         # 마지막에 에러뜸  => data 형태: pandas.  np.argmax 부분에서 y_test가 pandas 형태여서
+                                                         # numpy 자료형이 pandas를 바로 못 받아들이기 때문!!!!!
+                                                         # (np.argmax  대신 tf.argmax 쓰면 에러 안 남)
                                                          #import pandas as pd
+
 y = pd.get_dummies(y)
-#print(type(y))
-y = y.values           #.numpy()
+# print('y1 ',type(y))                                   # <class 'pandas.core.frame.DataFrame'>
 
+y = y.values                                             #values 쓰거나 .numpy() 쓰면 오류 해결 =>y = pandas 데이터를 numpy 데이터로 바꿔주는 과정 (뒷쪽 에러 잡기 위해)
 
+# print(type(y))                                         #<class 'numpy.ndarray'>
 # print(datasets.head())
-# print(y.shape)                      #(581012, 7)
-# print(y)
-
-#y.cat.remove_unused_categories()
-'''
-y = y.reshape(-1,1)
-
-ohe = OneHotEncoder()                   #???????????????????
-ohe.fit(y)
-y_ohe = ohe.transform(y)
-y_ohe = y_ohe.toarray()
-#shape 맞추는 작업 해야 error 안남
-
-
-'''
-
-# print(y)
+# print(y.shape)                                        #(581012, 7)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, random_state=115, test_size=0.2, stratify=y)
 
-#y = ohe.fit_transform(x_train)
-
-# print('x_test: ', x_test)
 
 #2. modeling
 model = Sequential()
@@ -108,7 +66,7 @@ earlyStopping = EarlyStopping(
 
 model.compile(loss='categorical_crossentropy', optimizer='adam',
               metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=1, batch_size=1000, 
+model.fit(x_train, y_train, epochs=1000, batch_size=1000, 
           validation_split=0.2, verbose =1, callbacks=[earlyStopping]
           )
 
@@ -161,4 +119,9 @@ acc:  0.46100358854762785
 loss:  3.6996772289276123
 accuracy:  0.3991979658603668
 acc:  0.3991979553023588
+
+
+loss:  0.529424250125885
+accuracy:  0.7766581177711487
+acc:  0.7766580897222963
 '''

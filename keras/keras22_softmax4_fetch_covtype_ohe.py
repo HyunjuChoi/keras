@@ -3,13 +3,7 @@ from sklearn.datasets import fetch_covtype
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
-import tensorflow as tf
-import pandas as pd
 
-import scipy.sparse
-
-
-from sklearn.preprocessing import OneHotEncoder
 
 #one-hot encoding 하는 방법: 판다스 사이킷런 텐서플로
 
@@ -18,58 +12,38 @@ datasets = fetch_covtype()
 x = datasets['data']
 y = datasets['target']
 
-# print('r_y: ')
-# print(y)
-
 # print(x.shape, y.shape)                             #(581012, 54) (581012,)         
 # print(np.unique(y, return_counts=True))             #(array([1, 2, 3, 4, 5, 6, 7]), array([211840, 283301,  35754,   2747,   9493,  17367,  20510],
                                                       #    dtype=int64))
                                                       
-                                                      
-                                              
-# from tensorflow.keras.utils import to_categorical           #array 데이터에 0값이 없으면 알아서 0추가해서 컬럼 수가 바뀜 ㅠ
-# y = to_categorical(y)
-
-# print('y1: ')
-print(y)
-print('================================')
-# print(y.shape)
-# print(type(y))
-
-#y =  y[:, 1:]           #(0번째 열 삭제)
-# print(y2)
-# print(y2.shape)
-
-# print(np.unique(y, return_counts=True))
-# print(np.unique(y2, return_counts=True))
-
-#y = np.delete(y, 0, axis=1)                 #0번째 열 삭제
-# print(y2.shape)
-#print(y)
-
-
-# print(datasets.head())
-# print(y.shape)                      #(581012, 7)
+                                                                                        
+# print(y.shape)                                      #(581012, 7)
 # print(y)
 
-#y.cat.remove_unused_categories()
 
-y = y.reshape(-1,1)
+#방법3. 원핫인코딩 (데이터 전처리)              << fit - transform - toarray >>
 
-ohe = OneHotEncoder()                   #???????????????????
+from sklearn.preprocessing import OneHotEncoder
+
+y = y.reshape(-1,1)                      # 2차원 변환 후 인코딩 해야 함! => 왜??? 원핫인코딩 차원이 2차원이니까
+# print(y.shape)                         # (581012, 1)   
+
+#y= y.reshape(581012, 1)                 # reshape할 때 데이터의 순서 바뀌지 않게 주의!!!!     <<31라인이랑 같은 방법>>
+
+ohe = OneHotEncoder()                   
 ohe.fit(y)
-y_ohe = ohe.transform(y)
-y_ohe = y_ohe.toarray()
-#shape 맞추는 작업 해야 error 안남
+y_ohe = ohe.transform(y)                # 결과값: (58012, 7)로 바뀜  =>data type = scipy 형태 
+#y_ohe = ohe.fit_transform(y)           # fit이랑 transform 한번에 적용도 가능
 
+y_ohe = y_ohe.toarray()                 # 필요한 것이 array이므로 array 반환. 여기서 안해줄거면 33라인 ohe = OneHotEncoder(sparse=False)해줘야 함!
 
+                                        #shape 맞추는 작업 해야 error 안남
 
-
-# print(y)
+# print(y)                              
 
 x_train, x_test, y_train, y_test = train_test_split(x, y_ohe, shuffle=True, random_state=115, test_size=0.2, stratify=y)
 
-#y = ohe.fit_transform(x_train)
+#y = ohe.fit_transform(x_train)ㅋㅋ
 
 # print('x_test: ', x_test)
 
@@ -98,7 +72,7 @@ earlyStopping = EarlyStopping(
 
 model.compile(loss='categorical_crossentropy', optimizer='adam',
               metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=1, batch_size=1000, 
+model.fit(x_train, y_train, epochs=1000, batch_size=1000, 
           validation_split=0.2, verbose =1, callbacks=[earlyStopping]
           )
 
@@ -151,4 +125,18 @@ acc:  0.46100358854762785
 loss:  3.6996772289276123
 accuracy:  0.3991979658603668
 acc:  0.3991979553023588
+
+
+1/11>
+
+loss:  0.44774898886680603
+accuracy:  0.8091873526573181
+acc:  0.809187370377701
+
+Epoch 00642: early stopping
+3632/3632 [==============================] - 2s 593us/step - loss: 0.4201 - accuracy: 0.8229
+loss:  0.42012685537338257
+accuracy:  0.8228789567947388
+acc:  0.8228789273943014
+s
 '''

@@ -4,9 +4,12 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from sklearn.model_selection import train_test_split
 
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
+
 #one-hot encoding 하는 방법: 판다스 사이킷런 텐서플로
 
-#1. data 
+#1. data
 datasets = fetch_covtype()
 x = datasets['data']
 y = datasets['target']
@@ -44,6 +47,10 @@ print(y)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, random_state=115, test_size=0.2, stratify=y)
 
+# scaler = MinMaxScaler()
+scaler = StandardScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
 
 # print('x_test: ', x_test)
 
@@ -132,5 +139,23 @@ acc:  0.3991979553023588
 loss:  0.44903087615966797
 accuracy:  0.8118637204170227
 acc:  0.8118637212464395
+
+
+1/11일
+
+<<min max>>
+Epoch 00297: early stopping
+3632/3632 [==============================] - 2s 558us/step - loss: 0.3684 - accuracy: 0.8506
+loss:  0.3683554530143738
+accuracy:  0.8506492972373962
+acc:  0.8506492947686376
+
+<<standard>>
+Epoch 00257: early stopping
+3632/3632 [==============================] - 2s 569us/step - loss: 0.3639 - accuracy: 0.8537
+loss:  0.3638581931591034
+accuracy:  0.8536612391471863
+acc:  0.8536612651996937
+
 
 '''
