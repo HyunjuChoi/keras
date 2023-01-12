@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Input, Dropout
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
@@ -14,6 +14,7 @@ from sklearn.preprocessing import StandardScaler
 
 #데이터 경로
 path = 'C:/study/_data/ddarung/'
+path2= 'C:/study/_save/'
 
 #csv file 가져오기
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)            #index_col: data가 아닌 index column이므로 데이터에 추가되지 않도록 인덱스 명시
@@ -95,30 +96,70 @@ x_test = scaler.transform(x_test)
 # print('x: ', x_train.shape, x_test.shape)          #(929, 9) (399, 9)
 # print('y: ' ,y_train.shape, y_test.shape)          #(929,) (399,)
 
+# #2. modeling
+# model = Sequential()
+# model.add(Dense(10, input_dim=9))
+# model.add(Dense(10, activation='relu'))
+# model.add(Dense(30, activation='relu'))
+# model.add(Dense(50, activation='relu'))
+# model.add(Dense(100, activation='relu'))
+# model.add(Dense(50, activation='relu'))
+# model.add(Dense(30, activation='relu'))
+# model.add(Dense(10, activation='relu'))
+# model.add(Dense(1))
+
 #2. modeling
-model = Sequential()
-model.add(Dense(10, input_dim=9))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(30, activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(100, activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(30, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(1))
+input1 = Input(shape=(9,))
+dense1 = Dense(10)(input1)
+drop1 = Dropout(0.5)(dense1)
+dense2 = Dense(10, activation='relu')(drop1)
+drop2 = Dropout(0.3)(dense2)
+dense3 = Dense(30, activation='relu')(drop2)
+drop3 = Dropout(0.2)(dense3)
+dense4 = Dense(50, activation='relu')(drop3)
+dense5 = Dense(100, activation='relu')(dense4)
+dense6 = Dense(50, activation='relu')(dense5)
+dense7 = Dense(30, activation='relu')(dense6)
+dense8 = Dense(10, activation='relu')(dense7)
+output1 = Dense(1)(dense8)
+
+model = Model(inputs = input1, outputs = output1)
 
 #3. compile and training                                                       #컴파일 시간 재기
 model.compile(loss='mse', optimizer='adam')#, metrics=['mse'])
-earlyStopping = EarlyStopping(
+es = EarlyStopping(
     monitor='val_loss',
     mode = min,
     patience = 50,
     restore_best_weights=True,
     verbose=1
 )
-model.fit(x_train, y_train, epochs=1000, batch_size=1, validation_split=0.3,
-          callbacks=[earlyStopping])
 
+import datetime
+date = datetime.datetime.now()
+print(date)
+print(type(date))                           # <class 'datetime.datetime'>
+date= date.strftime("%m%d_%H%M")
+
+print(date)                                 # 0112_1502
+
+filepath = 'C:/study/_save/MCP/'
+filename = '{epoch:04d}-{val_loss: .4f}.hdf5'                       # d: digit, f: float 
+
+
+#ModelCheckpoint 설정
+mcp = ModelCheckpoint(
+    monitor='val_loss', mode='auto', verbose=1,
+    save_best_only=True,                                              # save_best_only: 가중치 가장 좋은 지점 저장!
+    # filepath= path2 + 'MCP/keras30_ModelCheckPoint3.hdf5' 
+    filepath= filepath + 'k31_ddarung_' + 'd_'+ date + '_'+ 'e_v_'+ filename                      #파일명 날짜, 시간 넣어서 저장하기            
+)
+
+
+model.fit(x_train, y_train, epochs=1000, batch_size=10, validation_split=0.3,
+          callbacks=[es, mcp])
+
+model.save(path2 + 'keras31_dropout_save_model_drop_ddarung.h5')    
 
 #4. evaluation prediction
 loss = model.evaluate(x_test,y_test)
@@ -157,7 +198,10 @@ print('R2: ',r2)
 #print(submission)
 submission['count'] = y_submit          #비어있던 submission파일의 'count' 컬럼에 예측한 y_submit 값을 넣는다.
 #print(submission)
-submission.to_csv(path+'submission_0112_early_minmax2_.csv')
+submission.to_csv(path+'submission_0112_early_minmax_drop2.csv')
+
+
+
 
 '''
 결과치
@@ -323,13 +367,4 @@ Epoch 00153: early stopping
 loss:  1591.3389892578125
 RMSE:  39.89158989200553
 R2:  0.765291922397566
-
-
-
-1/12
-<<batch_size=1, minmax>>
-loss:  1572.504638671875
-RMSE:  39.65481768509052
-R2:  0.7680698225934169
-
 '''

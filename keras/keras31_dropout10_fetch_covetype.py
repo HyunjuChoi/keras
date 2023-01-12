@@ -1,11 +1,13 @@
 import numpy as np
 from sklearn.datasets import fetch_covtype
 from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Input
+from tensorflow.keras.layers import Dense, Input, Dropout
 from sklearn.model_selection import train_test_split
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
+
+path =  'C:/study/_save/'
 
 #one-hot encoding 하는 방법: 판다스 사이킷런 텐서플로
 
@@ -68,9 +70,12 @@ x_test = scaler.transform(x_test)
 #2. modeling
 input1 = Input(shape=(54, ))
 dense1 = Dense(30, activation='linear')(input1)
-dense2 = Dense(20, activation='relu')(dense1)
-dense3 = Dense(30, activation='relu')(dense2)
-dense4 = Dense(20, activation='relu')(dense3)
+drop1 = Dropout(0.5)(dense1)
+dense2 = Dense(20, activation='relu')(drop1)
+drop2 = Dropout(0.3)(dense2)
+dense3 = Dense(30, activation='relu')(drop2)
+drop3 = Dropout(0.2)(dense3)
+dense4 = Dense(20, activation='relu')(drop3)
 dense5 = Dense(10, activation='linear')(dense4)
 output1 = Dense(7, activation='softmax')(dense5)
 
@@ -80,10 +85,10 @@ model = Model(inputs = input1, outputs = output1)
 
 #3. compile and training
 
-from tensorflow.keras.callbacks import EarlyStopping                    #EarlyStopping 추가
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint                    #EarlyStopping 추가
 
 #earlystopping 기준 설정
-earlyStopping = EarlyStopping(
+es = EarlyStopping(
     monitor='val_loss',             #history의 val_loss의 최소값을 이용함
     mode='min',                     #max로 설정 시 갱신 안됨. (accuracy 사용 시에는 정확도 높을수록 좋기 때문에 max로 설정)
     patience=25,                     #earlystopping n번 (최저점 나올 때까지 n번 돌림. 그 안에 안 나오면 종료) 
@@ -93,9 +98,33 @@ earlyStopping = EarlyStopping(
 
 model.compile(loss='categorical_crossentropy', optimizer='adam',
               metrics=['accuracy'])
+
+import datetime
+date = datetime.datetime.now()
+print(date)
+print(type(date))                           # <class 'datetime.datetime'>
+date= date.strftime("%m%d_%H%M")
+
+print(date)                                 # 0112_1502
+
+filepath = 'C:/study/_save/MCP/'
+filename = '{epoch:04d}-{val_loss: .4f}.hdf5'                       # d: digit, f: float 
+
+
+#ModelCheckpoint 설정
+mcp = ModelCheckpoint(
+    monitor='val_loss', mode='auto', verbose=1,
+    save_best_only=True,                                              # save_best_only: 가중치 가장 좋은 지점 저장!
+    # filepath= path + 'MCP/keras30_ModelCheckPoint3.hdf5' 
+    filepath= filepath + 'k31_fetch_' + 'd_'+ date + '_'+ 'e_v_'+ filename                      #파일명 날짜, 시간 넣어서 저장하기            
+)
+
+
 model.fit(x_train, y_train, epochs=1000, batch_size=1000, 
-          validation_split=0.2, verbose =1, callbacks=[earlyStopping]
+          validation_split=0.2, verbose =1, callbacks=[es, mcp]
           )
+
+model.save(path + 'keras31_dropout_save_model_fetch.h5')           
 
 #4. evaluation and prediction
 loss, accuracy = model.evaluate(x_test, y_test)

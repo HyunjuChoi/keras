@@ -64,7 +64,7 @@ earlyStopping = EarlyStopping(
 hist = model.fit(x_train, y_train, epochs=200, batch_size=1, 
           validation_split=0.2, verbose=1, callbacks=[earlyStopping])           #val_loss를 기준으로 최소값이 n번 이상 갱신 안되면 훈련 중지                 
 
-#4. evalutaion and prediction
+#4. evaluation and prediction
 mse, mae = model.evaluate(x_test, y_test)
 print('mse: ', mse)
 print('mae: ', mae)

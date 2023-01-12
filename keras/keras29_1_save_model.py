@@ -1,6 +1,6 @@
 from sklearn.datasets import load_boston
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.layers import Dense, Input
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,23 +32,26 @@ scaler = MinMaxScaler()
 scaler.fit(x_train)                             # x값의 범위만큼의 가중치 생성
 x_train = scaler.transform(x_train)             # x의 값 변환하여 x에 저장
 #x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)               #x_train fit한 가중치 값 범위에 맞춰서 x_test 데이터 변환. fit 말고 transform만 하면 됨
+x_test = scaler.transform(x_test)               # x_train fit한 가중치 값 범위에 맞춰서 x_test 데이터 변환. 
+                                                # fit 말고 transform만 하면 됨
+#2. modeling (함수형)
+input1 = Input(shape=(13, ))
+dense1 = Dense(5, activation='relu')(input1)
+dense2 =Dense(10, activation='relu')(dense1)
+dense3 =Dense(20, activation='relu')(dense2)
+dense4 =Dense(50, activation='relu')(dense3)
+dense5 =Dense(20, activation='relu')(dense4)
+dense6 =Dense(10, activation='relu')(dense5)
+dense7 =Dense(5, activation='relu')(dense6)
+dense8 =Dense(3, activation='relu')(dense7)
+output1 =Dense(1, activation='linear')(dense8)
 
-#2. modeling
-model = Sequential()
-#model.add(Dense(5, input_dim=13))                  #input_dim은 행과 열일 때만 표현 가능함
-model.add(Dense(5, input_shape=(13, )))             #(13, ), input_shape: 다차원일 때 input_dim 대신 사용!
-                                                    #if (100, 10, 5)라면 (10,5)로 표현됨. 맨 앞의 100은 데이터 개수
-model.add(Dense(5, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(20, activation='relu'))
-model.add(Dense(50, activation='relu'))
-model.add(Dense(20, activation='relu'))
-model.add(Dense(10, activation='relu'))
-model.add(Dense(5, activation='relu'))
-model.add(Dense(3, activation='relu'))
-model.add(Dense(1))
+model = Model(inputs=input1, outputs=output1)
 
+path = 'C:/study/_save/'                                #path = './_save/'  or   '../_save/'
+model.save(path + 'keras29_1_save_model.h5')              #model.save('C:/study/_save/keras29_1_save_model.h5')
+
+'''
 #3. compile and training
 model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 
@@ -88,7 +91,7 @@ print('===================================')
 '''
 # print(hist.history['loss'])                 #loss값만 출력
 
-'''
+
 #5. 시각화
 plt.figure(figsize=(9,6))           #그래프 사이즈 설정
 plt.plot(hist.history['loss'], c='red', marker='.', label='loss')                #maker=선 무늬
@@ -101,10 +104,10 @@ plt.title('보스턴 손실 그래프')            #그래프 이름 추가
 plt.legend(loc='upper right')       #loc=' ': 원하는 위치에 설정 가능
 plt.show()
 
-'''
 
 
-'''결과치 
+"""
+결과치 
 1.Epoch 00059: early stopping
 4/4 [==============================] - 0s 0s/step - loss: 27.3670
 loss:  27.36704444885254
@@ -157,4 +160,6 @@ Epoch 00051: early stopping
 4/4 [==============================] - 0s 0s/step - loss: 21.1994 - mae: 3.0084
 mse:  21.199399948120117
 mae:  3.0083703994750977
+"""
 '''
+
