@@ -62,6 +62,8 @@ output1 = Dense(1)(dense10)
 
 model = Model(inputs = input1, outputs = output1)
 
+print(model.summary())
+
 #3. compile training
 model.compile(loss='mse', optimizer='adam', metrics=['mse'])
 earlyStopping = EarlyStopping(

@@ -6,8 +6,7 @@ import numpy as np
 
 from tensorflow.keras.callbacks import EarlyStopping                    #EarlyStopping 추가
 
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 #1. data
 datasets = load_breast_cancer()
