@@ -10,7 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 #1. data
 
 #데이터 경로
-path = './_data/ddarung/'
+path = '/Users/hyunju/Desktop/study/_data/ddarung/'
 
 #csv file 가져오기
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)            #index_col: data가 아닌 index column이므로 데이터에 추가되지 않도록 인덱스 명시

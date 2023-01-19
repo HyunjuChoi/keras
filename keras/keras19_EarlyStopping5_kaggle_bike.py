@@ -10,7 +10,7 @@ from tensorflow.keras.callbacks import EarlyStopping
 #1. data
 
 #불러올 데이터 경로
-path = './_data/bike/'
+path = '/Users/hyunju/Desktop/study/_data/bike/'
 
 #csv file 가져오기
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)
@@ -84,7 +84,7 @@ print('R2: ', r2)
 
 #submission file 만들기
 submission['count'] = y_submit
-submission.to_csv(path+'submission_0109_early_5.csv')
+submission.to_csv(path+'submission_0117_early_mac_test.csv')
 
 
 #tf27 time: 890.0578079223633
