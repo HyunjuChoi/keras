@@ -62,14 +62,14 @@ date= date.strftime("%m%d_%H%M")
 
 print(date)                                 
 
-filepath = 'C:/study/_save/MCP/'
+filepath = '/Users/hyunju/Desktop/study/_save/MCP/'
 filename = '{epoch:04d}-{val_loss: .4f}.hdf5'                       # d: digit, f: float 
 
 
 mcp = ModelCheckpoint(
     monitor='val_loss', mode='auto', verbose=3,
     save_best_only=True,
-    filepath= filepath + 'k34_cifar100_' + 'd_'+ date + '_'+ 'e_v_'+ filename 
+    #filepath= filepath + 'k34_cifar100_' + 'd_'+ date + '_'+ 'e_v_'+ filename 
 )
 
 model.compile(loss='sparse_categorical_crossentropy', optimizer='adam',
