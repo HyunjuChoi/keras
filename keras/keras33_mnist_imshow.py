@@ -9,8 +9,8 @@ print(x_train.shape, y_train.shape)                     # (60000, 28, 28) (60000
 print(x_test.shape, y_test.shape)                       # (10000, 28, 28) (10000,)
 
 
-print(x_train[0])
-print(y_train[0])
+print(x_train[100])
+print(y_train[100])
 
 plt.imshow(x_train[115], 'Blues')
 plt.show

@@ -32,16 +32,29 @@ print(np.unique(y_train, return_counts=True))
                                                      
 #2. 모델구성
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, AveragePooling2D, Dropout
+from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Dropout, AveragePooling2D
 
 model = Sequential()
 model.add(Conv2D(filters=128, kernel_size=(2,2), input_shape=(32, 32, 3),
-                 activation='relu'))                    # (31, 31, 128)
-model.add(Conv2D(filters=64, kernel_size=(2,2)))        # (30, 30, 64)
-model.add(Conv2D(filters=32, kernel_size=(2,2)))        # (28, 28, 32)
+                 activation='relu', padding='same'))                    # (31, 31, 128)
+model.add(Conv2D(filters=64, kernel_size=(2,2), padding='same'))        # (30, 30, 64)
+model.add(MaxPooling2D())
+model.add(Dropout(0.25))
+model.add(Conv2D(filters=64, kernel_size=(2,2), padding='same'))        # (28, 28, 32)
+model.add(AveragePooling2D())
+model.add(Dropout(0.3))
+model.add(Conv2D(filters=32, kernel_size=(2,2), padding='same'))        # (28, 28, 32)
+model.add(AveragePooling2D())
+model.add(Dropout(0.2))
+model.add(Conv2D(filters=32, kernel_size=(2,2), padding='same'))        # (28, 28, 32)
+model.add(AveragePooling2D())
+model.add(Dropout(0.3))
+model.add(Conv2D(filters=16, kernel_size=(2,2), padding='same'))        # (28, 28, 32)
+model.add(AveragePooling2D())
+model.add(Dropout(0.2))
 model.add(Flatten())                                    # 25,088
+model.add(Dense(16, activation='relu'))
 model.add(Dense(32, activation='relu'))
-model.add(Dense(50, activation='relu'))
 model.add(Dense(100, activation='softmax'))
 
 #3. 컴파일 & 훈련
@@ -69,7 +82,7 @@ filename = '{epoch:04d}-{val_loss: .4f}.hdf5'                       # d: digit, 
 mcp = ModelCheckpoint(
     monitor='val_loss', mode='auto', verbose=3,
     save_best_only=True,
-    filepath= filepath + 'k34_cifar100_' + 'd_'+ date + '_'+ 'e_v_'+ filename 
+    filepath= filepath + 'k35_cifar100_' + 'd_'+ date + '_'+ 'e_v_'+ filename 
 )
 
 model.compile(loss='sparse_categorical_crossentropy', optimizer='adam',
@@ -96,4 +109,22 @@ Epoch 00021: early stopping
 313/313 [==============================] - 1s 4ms/step - loss: 4.6052 - acc: 0.0100 
 loss:  4.60520601272583
 acc:  0.009999999776482582
+
+
+
+1/25
+1. drop out maxpooling averagepooling padding conv2D 레이어 추가
+313/313 [==============================] - 2s 5ms/step - loss: 2.7627 - acc: 0.2888
+loss:  2.762747287750244
+acc:  0.2888000011444092
+
+
+2. <drop out 추가>
+313/313 [==============================] - 1s 4ms/step - loss: 3.2827 - acc: 0.1778
+loss:  3.282677412033081
+acc:  0.1777999997138977
+
+
+3. <2의 dropout 제거, 다른 drop out 비율 변경>
+
 '''
