@@ -29,12 +29,12 @@ print(np.unique(y_train, return_counts=True))               #output class 개수
 # => class개수 [0~9]까지 
 # 10개, 0~9까지 일정하게 되어있으니까 ohe 안해도 된다... 뭔솔???? 
 
-x_train = x_train/28*28             # 이거 말고 rgb에서 255씩 나누는거 뭔솔?
-x_test = x_test/28*28
+x_train = x_train/255.           # 정규화 하여 최적화한다
+x_test = x_test/255.
 
-scaler = MinMaxScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
+# scaler = MinMaxScaler()
+# x_train = scaler.fit_transform(x_train)
+# x_test = scaler.transform(x_test)
 
 #2. 모델구성
 from tensorflow.keras.models import Sequential
@@ -140,5 +140,10 @@ Accuracy: 94.36%
 
 
 
-6. batch = 100
+6. batch = 100, 정규화: x_train/255.  x_test/255.
+Epoch 00092: early stopping
+313/313 [==============================] - 1s 3ms/step - loss: 0.1209 - acc: 0.9760
+loss:  0.12093878537416458
+acc:  0.9760000109672546s
+Accuracy: 97.60%
 '''
