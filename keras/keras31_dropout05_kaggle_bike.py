@@ -111,8 +111,6 @@ model.fit(x_train, y_train, epochs=2000, batch_size=10,
 
 model.save(path2 + 'keras31_dropout_save_model_drop_bike.h5')      
 
-model.fit(x_train, y_train, epochs=10000, batch_size = 32, validation_split=0.3, 
-          callbacks=[es, mcp])
 
 
 #4. Evaluation and Prediction

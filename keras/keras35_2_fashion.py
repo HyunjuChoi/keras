@@ -27,9 +27,9 @@ model = Sequential()
 model.add(Conv2D(filters=128, kernel_size = (2,2), input_shape=(28, 28, 1), 
                  padding='same',
                  strides=1,
-                 activation='relu'))                            # (28, 28, 128), default stride = 1
+                 activation='relu'))                            # (28, 28, 128), Conv2D의 default stride = 1
 
-model.add(MaxPooling2D())                                       # default stride 값 = 2
+model.add(MaxPooling2D())                                       # Max Pooling의 default stride 값 = 2
 model.add(Dropout(0.25))
 model.add(Conv2D(filters=64, kernel_size = (2,2), padding='same')) 
 model.add(MaxPooling2D())                                       # (14, 14, 128)
