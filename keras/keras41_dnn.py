@@ -25,7 +25,7 @@ print(x.shape, y.shape)             # (7, 3) (7,)
 
 x_train, x_test, y_train, y_test = train_test_split(x,y, shuffle=True, train_size=0.7, random_state=115)
 
-# print(x_train.shape, x_test.shape)                  # (4, 3) (3, 3)
+print(x_train.shape, x_test.shape)                  # (4, 3) (3, 3)
 
 #2. modeling
 model = Sequential()
@@ -36,6 +36,7 @@ model.add(Dense(32, activation='relu'))
 model.add(Dense(16, activation='relu'))
 model.add(Dense(8, activation='relu'))
 model.add(Dense(1))
+model.summary()
 
 #3. compile, training
 
@@ -54,8 +55,10 @@ model.fit(x_train, y_train, epochs=1000, batch_size=1, validation_split=0.2, cal
 loss = model.evaluate(x_test, y_test)
 print('loss: ', loss)
 
-y_pred = np.array([8,9,10]).reshape(1,3,1)
-# y_pred = np.array([8,9,10]).reshape(3, )
+# y_pred = np.array([8,9,10]).reshape(1,3,1)                            #=> dnn도 reshape 해주는 이유!
+                                                                        # dnn은 무조건 2차원 이상 input 들어와줘야 하는데 지금 1차원이므로 최소 2차원 이상으로 reshape
+                                                                        # reshape(1,3,1)이나 reshape(1,3) 둘 다 가능 !!
+y_pred = np.array([8,9,10]).reshape(1,3)
 # print(y_pred)
 
 result = model.predict(y_pred)
