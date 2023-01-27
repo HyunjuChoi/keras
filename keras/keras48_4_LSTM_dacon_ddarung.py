@@ -92,6 +92,7 @@ scaler = MinMaxScaler()
 # scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv)
 
 # print('x: ', x_train.shape, x_test.shape)          #(929, 9) (399, 9)
 # print('y: ' ,y_train.shape, y_test.shape)          #(929,) (399,)
@@ -200,7 +201,7 @@ print('R2: ',r2)
 #print(submission)
 submission['count'] = y_submit          #비어있던 submission파일의 'count' 컬럼에 예측한 y_submit 값을 넣는다.
 #print(submission)
-submission.to_csv(path+'submission_0125_early_minmax_cnn.csv')
+submission.to_csv(path+'submission_0127_early_minmax_lstm.csv')
 
 
 
