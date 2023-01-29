@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.datasets import fetch_covtype
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Dense, Input, Dropout, Conv2D, Flatten, LSTM, Conv1D
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split 
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
