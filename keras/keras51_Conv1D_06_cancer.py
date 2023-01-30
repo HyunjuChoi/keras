@@ -12,8 +12,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 
 
-path2 = '/Users/hyunju/Desktop/study/_save/'
-# path2 = 'C:/study/_save/'
+# path = '/Users/hyunju/Desktop/study/_save/'
+path = 'C:/study/_save/'
 
 
 #1. data
@@ -86,8 +86,8 @@ date = date.strftime("%m%d_%H%M")
 
 print(date)                                 # 0112_1502
 
-# filepath = 'C:/study/_save/MCP/'
-filepath = '/Users/hyunju/Desktop/study/_save/MCP/'
+filepath = 'C:/study/_save/MCP/'
+# filepath = '/Users/hyunju/Desktop/study/_save/MCP/'
 # d: digit, f: float
 filename = '{epoch:04d}-{val_loss: .4f}.hdf5'
 
@@ -104,7 +104,7 @@ mcp = ModelCheckpoint(
 hist = model.fit(x_train, y_train, epochs=5000, batch_size=16, validation_split=0.2,
                  callbacks=[es, mcp], verbose=1)
 
-model.save(path2 + 'keras51_conv1d_save_model_cancer.h5')
+model.save(path + 'keras51_conv1d_save_model_cancer.h5')
 
 #4. evaluation and prediction
 

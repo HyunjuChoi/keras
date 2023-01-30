@@ -29,6 +29,7 @@ model.compile(loss='mae', optimizer='adam')
 model.fit(x_train, y_train, epochs=200, batch_size=1)
 
 
+
 #4. eva pre
 loss = model.evaluate(x_test, y_test)
 print('loss: ', loss)
