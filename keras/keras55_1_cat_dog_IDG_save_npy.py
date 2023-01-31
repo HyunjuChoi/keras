@@ -13,6 +13,11 @@ train_datagen = ImageDataGenerator(
     # fill_mode='nearest'         # 이미지 shift 시켰을 때 빈 공간 생기면 가까이에 있는 데이터로 채우기
 )
 
+valid_datagen = ImageDataGenerator(
+    rescale = 1.0/255,
+    validation_split=0.2
+)
+
 test_datagen = ImageDataGenerator(
     rescale=1./255              # 테스트 데이터는 리스케일링만 한다! => why? 정확한 평가 위해!(데이터 증폭하면 신뢰성 떨어짐, 데이터 조작이나 마찬가지)
 )
@@ -23,7 +28,7 @@ test_datagen = ImageDataGenerator(
 xy_train= train_datagen.flow_from_directory(                 # 폴더 안에 있는 이미지 데이터 가져오기
             'D:/_data/DC/train/train/',
             target_size=(200, 200),                          # 모든 데이터 사이즈 통일
-            batch_size=1,                                
+            batch_size=1000,                                
             class_mode='binary',
             # class_mode='categorical',
             color_mode='rgb',
@@ -31,17 +36,17 @@ xy_train= train_datagen.flow_from_directory(                 # 폴더 안에 있
 
     )   # Found 25000 images belonging to 2 classes.          
 
-xy_valid= train_datagen.flow_from_directory(                 # 폴더 안에 있는 이미지 데이터 가져오기
-            'D:/_data/DC/train/train/',
-            target_size=(200, 200),                          # 모든 데이터 사이즈 통일
-            batch_size=1000,                                
-            class_mode='binary',
-            # class_mode='categorical',
-            color_mode='rgb',
-            shuffle=True,
-            # subset='validation'
+xy_valid= valid_datagen.flow_from_directory(                 # 폴더 안에 있는 이미지 데이터 가져오기
+             'D:/_data/DC/train/train/',
+             target_size=(200, 200),                          # 모든 데이터 사이즈 통일
+             batch_size=1000,                                
+             class_mode='binary',
+             # class_mode='categorical',
+             color_mode='rgb',
+             shuffle=True,
+             subset='validation'
 
-    )   # Found 25000 images belonging to 2 classes.
+     )   # Found 5000 images belonging to 2 classes.
 
 xy_test= test_datagen.flow_from_directory(                 # 폴더 안에 있는 이미지 데이터 가져오기
             'D:/_data/DC/test1/',
@@ -55,7 +60,8 @@ xy_test= test_datagen.flow_from_directory(                 # 폴더 안에 있�
     )   # Found 12500 images belonging to 1 classes.
 
 # print(xy_train.shape)    
-print(xy_test[0][1].shape)          # (1000, 200, 200, 3)   
+print(xy_test[0][1].shape)          # (1000,)   
+print(xy_test[0][0].shape)          # (1000, 200, 200, 3)
 
 # 먼소리여..... 
 print(xy_train[0][0].shape)         # (1000, 200, 200, 3)                 => 배치사이즈 1000으로 나눴으니까 25개 행에 (1000, 200, 200, 1)씩 들어가 있음. 
@@ -78,11 +84,11 @@ np.save('C:/study/_data/DC/dc_y_train.npy', arr=xy_train[0][1])                 
 np.save('C:/study/_data/DC/dc_x_valid.npy', arr=xy_valid[0][0])                     # numpy 파일 생성하여 x_valid 데이터 저장
 np.save('C:/study/_data/DC/dc_y_valid.npy', arr=xy_valid[0][1])                     # numpy 파일 생성하여 y_valid 데이터 저장
 
-# np.save('C:/study/_data/DC/dc_test.npy', arr=xy_test)                     # numpy 파일 생성하여 xy_test 데이터 저장
-# np.save('C:/study/_data/DC/dc_y_test.npy', arr=xy_valid[0][1])                     # numpy 파일 생성하여 y_valid 데이터 저장
+np.save('C:/study/_data/DC/dc_x_test.npy', arr=xy_test[0][0])                     # numpy 파일 생성하여 xy_test 데이터 저장
+# np.save('C:/study/_data/DC/dc_y_test.npy', arr=xy_test[0][1])                    
 
 
-print(type(xy_train))               # <class 'keras.preprocessing.image.DirectoryIterator'>
-print(type(xy_train[0]))            # <class 'tuple'>          리스트와의 차이점: 생성 후 데이터 변경(수정) 불가
-print(type(xy_train[0][0]))         # <class 'numpy.ndarray'>
-print(type(xy_train[0][1]))         # <class 'numpy.ndarray'>
+# print(type(xy_train))               # <class 'keras.preprocessing.image.DirectoryIterator'>
+# print(type(xy_train[0]))            # <class 'tuple'>          리스트와의 차이점: 생성 후 데이터 변경(수정) 불가
+# print(type(xy_train[0][0]))         # <class 'numpy.ndarray'>
+# print(type(xy_train[0][1]))         # <class 'numpy.ndarray'>

@@ -1,10 +1,12 @@
 import numpy as np
-from tensorflow.keras.preprocessing.image import ImageDataGenerator                     # 이미지를 데이터로 변경 => 증폭 가능
+from tensorflow.keras.preprocessing.image import ImageDataGenerator                     # 이미지를 데이터로 변경 => 증폭 가능 (실시간 이미지 증가(augumentation))
 
 train_datagen = ImageDataGenerator(
     rescale=1./255,             # 255로 나눈다 => min_max scaling
-    horizontal_flip=True,       # 수평선을 기준으로 image 반전
-    vertical_flip=True,         # 수직선을 기준으로 image 반전
+    
+    #### 여기서 데이터 변경 이루어지면 그만큼 데이터가 배로 생성됨을 유의 ####
+    horizontal_flip=True,       # 수평선을 기준으로 50% 확률로 image 반전
+    vertical_flip=True,         # 수직선을 기준으로 50% 확률로 image 반전
     width_shift_range=0.1,      # 0.1만큼 이동
     height_shift_range=0.1,     # 0.1만큼 이동
     rotation_range=5,           # image 회전

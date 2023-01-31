@@ -42,6 +42,8 @@ x_test = scaler.transform(x_test)
 
 # print(x_train.shape, x_test.shape)                  # (1437, 64) (360, 64)
 
+print(y_test.shape)         # (360, 10)
+
 x_train = x_train.reshape(1437, 8, 8)
 x_test = x_test.reshape(360, 8, 8)
 

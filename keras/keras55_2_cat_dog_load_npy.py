@@ -20,11 +20,16 @@ from sklearn.metrics import accuracy_score, r2_score
 ### 저장한 numpy 파일 불러오기 ###
 x_train = np.load('C:/study/_data/DC/dc_x_train.npy')
 y_train = np.load('C:/study/_data/DC/dc_y_train.npy')
-# x_valid = np.load('C:/xtudy/_data/DC/dc_x_valid.npy')
-# y_valid = np.load('C:/study/_data/DC/dc_y_valid.npy')
+x_valid = np.load('C:/study/_data/DC/dc_x_valid.npy')
+y_valid = np.load('C:/study/_data/DC/dc_y_valid.npy')
 
-# print(x_train.shape, x_test.shape)                  # (1000, 200, 200, 3) (1000, 200, 200, 3)
-# print(y_train.shape, y_test.shape)                  # (1000,) (1000,)
+x_test = np.load('C:/study/_data/DC/dc_x_test.npy')
+# y_test = np.load('C:/study/_data/DC/dc_y_test.npy')
+
+print(x_train.shape, x_test.shape)                  # (1000, 200, 200, 3) (1000, 200, 200, 3)
+print(y_train.shape)                  # (1000,) (1000,)
+
+print(x_test)
 
 
 # 2. modeling
@@ -42,7 +47,7 @@ model.add(Conv2D(16, (2,2), activation='relu'))
 model.add(Flatten())
 model.add(Dense(16, activation='relu'))
 model.add(Dense(16, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))         # y 데이터 0,1이므로 sigomoid~!! 
+model.add(Dense(2, activation='softmax'))         # y 데이터 0,1이므로 sigomoid~!! 
 
 # 3. compile and training
 
@@ -55,14 +60,14 @@ es = EarlyStopping(
     restore_best_weights=True,
 )
 
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
-hist = model.fit(x_train, y_train, epochs=1000,                       # xy_train[0][0]: x data, xy_train[0][1]: y data
+model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['acc'])
+hist = model.fit(x_train, y_train, epochs=1,                       # xy_train[0][0]: x data, xy_train[0][1]: y data
                                                                       # batch_size 통으로 잘라서 160개 통채로 들어가 있으므로 [0][0], [0][1]이 가능함
                     #validation_data=xy_test,
                     batch_size= 25,                                 # batch_size에 왜 영향 받는지?????              
                     #validation_steps=16
                     validation_split=0.2,
-                    # validation_data=[x_valid, y_valid],
+                    validation_data=[x_valid, y_valid],
                     callbacks=[es]
                     )    
 
@@ -85,8 +90,10 @@ print('val_acc: ', val_acc[-1])
 
 # 4. evaluatioin and prediction
 
-# loss = model.evaluation(x_test, y_test)
-# y_pred = model.predict(x_test)
+y_pred = model.predict(x_test)
+y_pred = model.argmax(y_pred, axis=1)
 # result = r2_score(y_test, y_pred)
+
+print('예측 : ',y_pred)
 
 # model.evaluate_generator(x)
