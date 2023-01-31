@@ -28,7 +28,7 @@ test_datagen = ImageDataGenerator(
 xy_train= train_datagen.flow_from_directory(                 # 폴더 안에 있는 이미지 데이터 가져오기 (x,y 데이터 함께 있음)
             'C:/study/_data/brain/train/',
             target_size=(100, 100),                          # 모든 데이터 사이즈 통일
-            batch_size=1000,                                   # 훈련 시 5개씩 잘라서 훈련(fit에서 굳이 안 잘라도 됨)
+            batch_size=10000,                                   # 훈련 시 5개씩 잘라서 훈련(fit에서 굳이 안 잘라도 됨)
             class_mode='binary',
             color_mode='grayscale',
             shuffle=True
@@ -38,7 +38,7 @@ xy_train= train_datagen.flow_from_directory(                 # 폴더 안에 있
 xy_test= test_datagen.flow_from_directory(                 # 폴더 안에 있는 이미지 데이터 가져오기
             'C:/study/_data/brain/test/',
             target_size=(100, 100),                          # 모든 데이터 사이즈 통일
-            batch_size=1000,                                    # 훈련 시 5개씩 잘라서 훈련(fit에서 굳이 안 잘라도 됨)
+            batch_size=10000,                                    # 훈련 시 5개씩 잘라서 훈련(fit에서 굳이 안 잘라도 됨)
             class_mode='binary',
             color_mode='grayscale',
             shuffle=True
@@ -73,8 +73,8 @@ es = EarlyStopping(
 )
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
-hist = model.fit(xy_train[0][0], xy_train[0][1], epochs=1000,                                    # xy_train[0][0]: x data, xy_train[0][1]: y data
-                                                                                                # batch_size 통으로 잘라서 160개 통채로 들어가 있으므로 [0][0], [0][1]이 가능함
+hist = model.fit(xy_train[0][0], xy_train[0][1], epochs=1000,                       # xy_train[0][0]: x data, xy_train[0][1]: y data
+                                                                                    # batch_size 통으로 잘라서 160개 통채로 들어가 있으므로 [0][0], [0][1]이 가능함
                     #validation_data=xy_test,
                     batch_size= 16,                  
                     #validation_steps=16

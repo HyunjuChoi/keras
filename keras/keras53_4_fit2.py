@@ -1,10 +1,13 @@
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator                     # 이미지를 데이터로 변경 => 증폭 가능
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 # 1. data
 
 train_datagen = ImageDataGenerator(
-    rescale=1./255,             # 255로 나눈다 => min_max(255-0) scaling
+    rescale=1./255,             # 255로 나눈다 => min_max scaling
     horizontal_flip=True,       # 수평선을 기준으로 image 반전
     vertical_flip=True,         # 수직선을 기준으로 image 반전
     width_shift_range=0.1,      # 0.1만큼 이동
@@ -25,7 +28,7 @@ test_datagen = ImageDataGenerator(
 xy_train= train_datagen.flow_from_directory(                 # 폴더 안에 있는 이미지 데이터 가져오기 (x,y 데이터 함께 있음)
             'C:/study/_data/brain/train/',
             target_size=(100, 100),                          # 모든 데이터 사이즈 통일
-            batch_size=10,                                   # 훈련 시 5개씩 잘라서 훈련(fit에서 굳이 안 잘라도 됨)
+            batch_size=10000,                                   # 훈련 시 5개씩 잘라서 훈련(fit에서 굳이 안 잘라도 됨)
             class_mode='binary',
             color_mode='grayscale',
             shuffle=True
@@ -35,7 +38,7 @@ xy_train= train_datagen.flow_from_directory(                 # 폴더 안에 있
 xy_test= test_datagen.flow_from_directory(                 # 폴더 안에 있는 이미지 데이터 가져오기
             'C:/study/_data/brain/test/',
             target_size=(100, 100),                          # 모든 데이터 사이즈 통일
-            batch_size=10,                                    # 훈련 시 5개씩 잘라서 훈련(fit에서 굳이 안 잘라도 됨)
+            batch_size=10000,                                    # 훈련 시 5개씩 잘라서 훈련(fit에서 굳이 안 잘라도 됨)
             class_mode='binary',
             color_mode='grayscale',
             shuffle=True
@@ -46,27 +49,45 @@ xy_test= test_datagen.flow_from_directory(                 # 폴더 안에 있�
 # 2. modeling
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, Flatten, LSTM, Conv1D
+from tensorflow.keras.layers import Dense, Conv2D, Flatten
 
 model = Sequential()
-model.add(Conv2D(128, (2,2), activation='relu', input_shape=(100, 100, 1)))
-model.add(Conv2D(64, (3,3), activation='relu'))
-model.add(Conv2D(64, (3,3), activation='relu'))
-model.add(Conv2D(32, (3,3), activation='relu'))
-model.add(Conv2D(32, (3,3), activation='relu'))
-model.add(Conv2D(32, (3,3), activation='relu'))
+model.add(Conv2D(64, (2,2), activation='relu', input_shape=(100, 100, 1)))
+model.add(Conv2D(64, (3,3), activation='relu', padding='same'))
+model.add(Conv2D(32, (3,3), activation='relu', padding='same'))
+model.add(Conv2D(32, (3,3), activation='relu', padding='same'))
+model.add(Conv2D(16, (3,3), activation='relu', padding='same'))
+model.add(Conv2D(16, (2,2), activation='relu'))
 model.add(Flatten())
 model.add(Dense(16, activation='relu'))
 model.add(Dense(16, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))         # y 데이터 0,1이므로 sigomoid~!! 
-# model.add(Dense(2, activation='softmax'))       # compile loss = 'sparse_categorical_crossentropy' (원핫인코딩 안 했을 경우)
 
 # 3. compile and training
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])  
-hist = model.fit_generator(xy_train, steps_per_epoch=16, epochs=10,
-                    validation_data=xy_test,                    # 검증 데이터는 위에서 나눠준 xy_test 그대로 넣어주면 됨
-                    validation_steps=16
-                    )               # steps_per_epochs와 validation_steps는 배치사이즈로 나눈 값이 최대, 그 이상으로 설정하면 에러 날 수 있음
+
+es = EarlyStopping(
+    monitor='val_loss',
+    mode='min',
+    patience = 25,
+    restore_best_weights=True,
+)
+
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
+hist = model.fit(#xy_train[0][0], xy_train[0][1], epochs=1000,                       # xy_train[0][0]: x data, xy_train[0][1]: y data
+                                                                            # batch_size 통으로 잘라서 160개 통채로 들어가 있으므로 [0][0], [0][1]이 가능함
+                    xy_train,                                               # 이렇게도 가능         
+                    #validation_data=xy_test,
+                    batch_size= 16,                  
+                    #validation_steps=16
+                    # validation_data=(xy_test[0][0], xy_test[0][1]),
+                    # validation_split=0.2,n
+                    callbacks=[es]
+                    )    
+
+# hist = model.fit_generator(xy_train, steps_per_epoch=16, epochs=100,
+#                     validation_data=xy_test,                    # 검증 데이터는 위에서 나눠준 xy_test 그대로 넣어주면 됨
+#                     validation_steps=16
+#                     )               # steps_per_epochs와 validation_steps는 배치사이즈로 나눈 값이 최대, 그 이상으로 설정하면 에러 날 수 있음
 
 accuracy = hist.history['acc']
 val_acc = hist.history['val_acc']
@@ -80,15 +101,5 @@ print('accuracy: ', accuracy[-1])
 print('val_acc: ', val_acc[-1])
 
 
-
-# 그림 그리기
-
-import matplotlib.pyplot as plt
-line1, line2 = plt.plot(val_loss, 'r:^', val_acc, 'g:v')             #그림이 이거 말하는 거 맞나요... => 아닌듯요....
-plt.show()
-# plt.imshow(xy_train[115], 'Blues')
-# plt.show
-# plt.plot(x, y_predict, color='red')             #가중치 구해서 나온 예측값 그래프 그리기
-# plt.show()
 
 # 4. evaluation and prediction
